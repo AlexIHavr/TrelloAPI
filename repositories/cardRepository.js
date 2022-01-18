@@ -28,8 +28,8 @@ class CardRepository extends BaseRepository {
     return super.getAllItems();
   }
 
-  getCardsWithFilter(filterFields) {
-    return super.getItemsWithFilter(filterFields);
+  getCardsByFilter(filterFields) {
+    return super.getItemsByFilter(filterFields);
   }
 
   getCard(idItem) {

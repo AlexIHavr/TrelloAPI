@@ -12,7 +12,7 @@ class CardController {
   }
 
   getCards(req, res) {
-    const filteredCards = cardRepository.getCardsWithFilter(req.body);
+    const filteredCards = cardRepository.getCardsByFilter(req.body);
     res.json(filteredCards);
   }
 

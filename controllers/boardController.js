@@ -12,7 +12,7 @@ class BoardController {
   }
 
   getBoards(req, res) {
-    const filteredBoards = boardRepository.getBoardsWithFilter(req.body);
+    const filteredBoards = boardRepository.getBoardsByFilter(req.body);
     res.json(filteredBoards);
   }
 

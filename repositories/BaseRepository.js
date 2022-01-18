@@ -23,7 +23,7 @@ class BaseRepository {
     return data;
   }
 
-  getItemsWithFilter(filterFields) {
+  getItemsByFilter(filterFields) {
     return this.getAllItems().reduce((filteredItems, item) => {
       for (let field in filterFields) {
         if (item[field] !== filterFields[field]) {

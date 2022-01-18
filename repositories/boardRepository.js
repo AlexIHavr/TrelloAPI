@@ -19,8 +19,8 @@ class BoardRepository extends BaseRepository {
     return super.getAllItems();
   }
 
-  getBoardsWithFilter(filterFields) {
-    return super.getItemsWithFilter(filterFields);
+  getBoardsByFilter(filterFields) {
+    return super.getItemsByFilter(filterFields);
   }
 
   getBoard(idItem) {
@@ -32,7 +32,7 @@ class BoardRepository extends BaseRepository {
   }
 
   deleteBoard(id) {
-    cardRepository.getCardsWithFilter({ boardId: id }).forEach((item) => {
+    cardRepository.getCardsByFilter({ boardId: id }).forEach((item) => {
       console.log(item);
       cardRepository.deleteItem(item.id);
     });
