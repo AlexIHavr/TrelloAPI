@@ -1,11 +1,14 @@
 import Joi from 'joi';
 import ApiError from '../errors/ApiError.js';
+import { boardsDoc } from '../models/models.js';
+import trelloDB from '../repositories/trelloDB.js';
 
 const cardValidationMiddleware = (req, res, next) => {
   const cardSchema = Joi.object({
     boardId: Joi.string()
       .trim()
-      .guid({ version: ['uuidv4'] }),
+      .guid({ version: ['uuidv4'] })
+      .required(),
     id: Joi.string()
       .trim()
       .guid({ version: ['uuidv4'] }),
@@ -21,6 +24,10 @@ const cardValidationMiddleware = (req, res, next) => {
 
   if (error) {
     return next(ApiError.BadRequest(error.message));
+  }
+
+  if (!trelloDB.getItem(boardsDoc, req.body.boardId)) {
+    throw ApiError.BadRequest('Board with this card does not exist. Check out board id.');
   }
 
   if (req.body.status) {

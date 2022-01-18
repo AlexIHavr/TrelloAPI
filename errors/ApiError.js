@@ -4,8 +4,8 @@ class ApiError extends Error {
     this.code = code;
   }
 
-  static Forbidden() {
-    return new ApiError(403, 'No access, check out bearer access token.');
+  static Forbidden(message) {
+    return new ApiError(403, message);
   }
 
   static BadRequest(message) {
