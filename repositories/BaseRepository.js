@@ -4,7 +4,7 @@ import ApiError from '../errors/ApiError.js';
 
 class BaseRepository {
   constructor(docName) {
-    this.docName = docName;
+    this._docName = docName;
   }
 
   getAllItems() {
@@ -14,8 +14,8 @@ class BaseRepository {
       fs.mkdirSync('./docs');
     }
 
-    if (fs.existsSync(`./docs/${this.docName}`)) {
-      data = JSON.parse(fs.readFileSync(`./docs/${this.docName}`, { encoding: 'utf-8' }));
+    if (fs.existsSync(`./docs/${this._docName}`)) {
+      data = JSON.parse(fs.readFileSync(`./docs/${this._docName}`, { encoding: 'utf-8' }));
     } else {
       this._saveDB(data);
     }
@@ -97,7 +97,7 @@ class BaseRepository {
   }
 
   _saveDB(data) {
-    fs.writeFileSync(`./docs/${this.docName}`, JSON.stringify(data));
+    fs.writeFileSync(`./docs/${this._docName}`, JSON.stringify(data));
   }
 }
 
