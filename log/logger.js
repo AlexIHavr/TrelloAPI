@@ -1,15 +1,22 @@
 import winston from 'winston';
 
 class Logger {
-  runLogger(level, message) {
+  constructor() {
+    this._productLogger = this._createProductLogger();
+    this._devLogger = this._createDevLogger();
+  }
+
+  runLogger(level, message, filePath) {
     if (process.env.NODE_ENV === 'production ') {
-      this._getProductLogger().log({ level, message });
+      this._productLogger
+        .add(new winston.transports.File({ filename: filePath }))
+        .log({ level, message });
     } else {
-      this._getDevLogger().log({ level, message });
+      this._devLogger.log({ level, message });
     }
   }
 
-  _getProductLogger() {
+  _createProductLogger() {
     const logFormat = winston.format.printf(({ timestamp, level, message }) => {
       return `${timestamp} - ${level}: ${message}`;
     });
@@ -19,11 +26,10 @@ class Logger {
         winston.format.timestamp({ format: 'DD-MM-YYYY HH:mm:ss' }),
         logFormat
       ),
-      transports: new winston.transports.File({ filename: 'errors.log' }),
     });
   }
 
-  _getDevLogger() {
+  _createDevLogger() {
     const logFormat = winston.format.printf(({ level, message }) => {
       return `${level}: ${message}`;
     });

@@ -2,25 +2,29 @@ import fs from 'fs';
 import { v4 } from 'uuid';
 import ApiError from '../errors/ApiError.js';
 
-class TrelloDB {
-  getAllItems(docName) {
+class BaseRepository {
+  constructor(docName) {
+    this.docName = docName;
+  }
+
+  getAllItems() {
     let data = [];
 
     if (!fs.existsSync('./docs')) {
       fs.mkdirSync('./docs');
     }
 
-    if (fs.existsSync(`./docs/${docName}`)) {
-      data = JSON.parse(fs.readFileSync(`./docs/${docName}`, { encoding: 'utf-8' }));
+    if (fs.existsSync(`./docs/${this.docName}`)) {
+      data = JSON.parse(fs.readFileSync(`./docs/${this.docName}`, { encoding: 'utf-8' }));
     } else {
-      this._saveDB(docName, data);
+      this._saveDB(data);
     }
 
     return data;
   }
 
-  getItemsWithFilter(docName, filterFields) {
-    return this.getAllItems(docName).reduce((filteredItems, item) => {
+  getItemsWithFilter(filterFields) {
+    return this.getAllItems().reduce((filteredItems, item) => {
       for (let field in filterFields) {
         if (item[field] !== filterFields[field]) {
           return filteredItems;
@@ -32,42 +36,48 @@ class TrelloDB {
     }, []);
   }
 
-  getItem(docName, idItem) {
-    const allData = this.getAllItems(docName);
-    return allData.find(({ id }) => id === idItem);
+  getItem(idItem) {
+    const allData = this.getAllItems();
+    const item = allData.find(({ id }) => id === idItem);
+
+    if (!item) {
+      throw ApiError.BadRequest('Item with this id does not exist.');
+    }
+
+    return item;
   }
 
-  addItem(docName, data) {
-    const allData = this.getAllItems(docName);
+  addItem(data) {
+    const allData = this.getAllItems();
 
     const newItem = { id: v4(), ...data };
     allData.push(newItem);
 
-    this._saveDB(docName, allData);
+    this._saveDB(allData);
 
     return newItem;
   }
 
-  changeItem(docName, data) {
-    const allData = this.getAllItems(docName);
+  changeItem(data) {
+    const allData = this.getAllItems();
 
     const itemIndex = this._getItemIndex(allData, data.id);
 
     allData[itemIndex] = { ...allData[itemIndex], ...data };
 
-    this._saveDB(docName, allData);
+    this._saveDB(allData);
 
     return allData[itemIndex];
   }
 
-  deleteItem(docName, id) {
-    const allData = this.getAllItems(docName);
+  deleteItem(id) {
+    const allData = this.getAllItems();
 
     const itemIndex = this._getItemIndex(allData, id);
 
     const deletedItem = allData.splice(itemIndex, 1);
 
-    this._saveDB(docName, allData);
+    this._saveDB(allData);
 
     return deletedItem;
   }
@@ -86,9 +96,9 @@ class TrelloDB {
     return itemIndex;
   }
 
-  _saveDB(docName, data) {
-    fs.writeFileSync(`./docs/${docName}`, JSON.stringify(data));
+  _saveDB(data) {
+    fs.writeFileSync(`./docs/${this.docName}`, JSON.stringify(data));
   }
 }
 
-export default new TrelloDB();
+export default BaseRepository;

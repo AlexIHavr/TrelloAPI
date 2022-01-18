@@ -1,53 +1,28 @@
-import ApiError from '../errors/ApiError.js';
-import { boardsDoc, cardsDoc } from '../models/models.js';
-import trelloDB from '../repositories/trelloDB.js';
+import boardRepository from '../repositories/boardRepository.js';
 
 class BoardController {
-  createBoard(req, res) {
-    const { name, color, description } = req.body;
-
-    const newBoard = trelloDB.addItem(boardsDoc, {
-      name: name ?? 'Default board',
-      color: color ?? 'white',
-      description: description ?? '',
-      createdAt: new Date().toLocaleString(),
-    });
-
+  addBoard(req, res) {
+    const newBoard = boardRepository.addBoard(req.body);
     res.json(newBoard);
   }
 
   getBoard(req, res) {
-    const board = trelloDB.getItem(boardsDoc, req.body.id);
-
-    if (!board) {
-      throw ApiError.BadRequest('Board with this id does not exist.');
-    }
-
+    const board = boardRepository.getItem(req.body.id);
     res.json(board);
   }
 
   getBoards(req, res) {
-    const filteredBoards = trelloDB.getItemsWithFilter(boardsDoc, req.body);
+    const filteredBoards = boardRepository.getBoardsWithFilter(req.body);
     res.json(filteredBoards);
   }
 
-  getAllBoards(req, res) {
-    const allBoards = trelloDB.getAllItems(boardsDoc);
-    res.json(allBoards);
-  }
-
   changeBoard(req, res) {
-    const changedBoard = trelloDB.changeItem(boardsDoc, req.body);
+    const changedBoard = boardRepository.changeBoard(req.body);
     res.json(changedBoard);
   }
 
   deleteBoard(req, res) {
-    const deletedBoard = trelloDB.deleteItem(boardsDoc, req.body.id);
-
-    trelloDB.getItemsWithFilter(cardsDoc, { boardId: req.body.id }).forEach((item) => {
-      trelloDB.deleteItem(cardsDoc, item.id);
-    });
-
+    const deletedBoard = boardRepository.deleteBoard(req.body.id);
     res.json(deletedBoard);
   }
 }

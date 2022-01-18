@@ -1,18 +1,42 @@
 import { Router } from 'express';
 import boardController from '../controllers/boardController.js';
+import boardValidationMiddleware from '../middlewares/boardValidationMiddleware.js';
 import rolesMiddleware from '../middlewares/rolesMiddleware.js';
+import boardValidationRepository from '../repositories/boardValidationRepository.js';
 import { ADMIN } from '../roles/roles.js';
 
 const boardRouter = Router();
 
-boardRouter.post('/createBoard', rolesMiddleware([ADMIN]), boardController.createBoard);
+boardRouter.post(
+  '/addBoard',
+  boardValidationMiddleware(boardValidationRepository.notRequiredIdSchema),
+  rolesMiddleware([ADMIN]),
+  boardController.addBoard
+);
 
-boardRouter.get('/getBoard', boardController.getBoard);
-boardRouter.get('/getAllBoards', boardController.getAllBoards);
-boardRouter.get('/getBoards', boardController.getBoards);
+boardRouter.get(
+  '/getBoard',
+  boardValidationMiddleware(boardValidationRepository.requiredIdSchema),
+  boardController.getBoard
+);
+boardRouter.get(
+  '/getBoards',
+  boardValidationMiddleware(boardValidationRepository.notRequiredIdSchema),
+  boardController.getBoards
+);
 
-boardRouter.put('/changeBoard', rolesMiddleware([ADMIN]), boardController.changeBoard);
+boardRouter.put(
+  '/changeBoard',
+  boardValidationMiddleware(boardValidationRepository.requiredIdSchema),
+  rolesMiddleware([ADMIN]),
+  boardController.changeBoard
+);
 
-boardRouter.delete('/deleteBoard', rolesMiddleware([ADMIN]), boardController.deleteBoard);
+boardRouter.delete(
+  '/deleteBoard',
+  boardValidationMiddleware(boardValidationRepository.requiredIdSchema),
+  rolesMiddleware([ADMIN]),
+  boardController.deleteBoard
+);
 
 export default boardRouter;
