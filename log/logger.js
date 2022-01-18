@@ -10,8 +10,8 @@ class Logger {
   }
 
   _getProductLogger() {
-    const logFormat = winston.format.printf(({ timestamp, code, message }) => {
-      return `${timestamp} - ${code} ${message}`;
+    const logFormat = winston.format.printf(({ timestamp, level, message }) => {
+      return `${timestamp} - ${level}: ${message}`;
     });
 
     return winston.createLogger({
