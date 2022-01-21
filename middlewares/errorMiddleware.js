@@ -1,12 +1,7 @@
-import devLogger from '../log/devLogger.js';
-import productLogger from '../log/productLogger.js';
+import logger from '../log/logger.js';
 
 const errorMiddleware = (err, req, res, next) => {
-  if (process.env.NODE_ENV === 'production ') {
-    productLogger.error(err);
-  } else {
-    devLogger.error(err);
-  }
+  logger.runLogger('error', err.message);
 
   res.json({ code: err.code, message: err.message });
 };
