@@ -2,18 +2,15 @@ import winston from 'winston';
 
 class Logger {
   constructor() {
-    this._productLogger = this._createProductLogger();
-    this._devLogger = this._createDevLogger();
+    if (process.env.NODE_ENV === 'production ') {
+      this._logger = this._createProductLogger();
+    } else {
+      this._logger = this._createDevLogger();
+    }
   }
 
-  runLogger(level, message, filePath) {
-    if (process.env.NODE_ENV === 'production ') {
-      this._productLogger
-        .add(new winston.transports.File({ filename: filePath }))
-        .log({ level, message });
-    } else {
-      this._devLogger.log({ level, message });
-    }
+  runLogger(level, message) {
+    this._logger.log({ level, message });
   }
 
   _createProductLogger() {
@@ -26,6 +23,7 @@ class Logger {
         winston.format.timestamp({ format: 'DD-MM-YYYY HH:mm:ss' }),
         logFormat
       ),
+      transports: new winston.transports.File({ filename: 'logs.log' }),
     });
   }
 

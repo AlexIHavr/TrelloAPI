@@ -1,36 +1,36 @@
 import { Router } from 'express';
 import cardController from '../controllers/cardController.js';
-import cardValidationMiddleware from '../middlewares/cardValidationMiddleware.js';
-import cardValidationRepository from '../repositories/cardValidationRepository.js';
+import validationMiddleware from '../middlewares/validationMiddleware.js';
+import cardValidationSchema from '../schemas/cardValidationSchema.js';
 
 const cardRouter = Router();
 
 cardRouter.post(
   '/addCard',
-  cardValidationMiddleware(cardValidationRepository.requiredBoardIdSchema),
+  validationMiddleware(cardValidationSchema.requiredBoardIdSchema),
   cardController.addCard
 );
 
 cardRouter.get(
   '/getCard',
-  cardValidationMiddleware(cardValidationRepository.requiredIdSchema),
+  validationMiddleware(cardValidationSchema.requiredIdSchema),
   cardController.getCard
 );
 cardRouter.get(
   '/getCards',
-  cardValidationMiddleware(cardValidationRepository.notRequiredIdSchema),
+  validationMiddleware(cardValidationSchema.notRequiredIdSchema),
   cardController.getCards
 );
 
 cardRouter.put(
   '/changeCard',
-  cardValidationMiddleware(cardValidationRepository.requiredIdSchema),
+  validationMiddleware(cardValidationSchema.requiredIdSchema),
   cardController.changeCard
 );
 
 cardRouter.delete(
   '/deleteCard',
-  cardValidationMiddleware(cardValidationRepository.requiredIdSchema),
+  validationMiddleware(cardValidationSchema.requiredIdSchema),
   cardController.deleteCard
 );
 

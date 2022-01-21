@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-class CardValidationRepository {
+class cardValidationSchema {
   get requiredIdSchema() {
     return this._getDefaultSchema().append({
       id: this._getIdSchema().required(),
@@ -33,10 +33,10 @@ class CardValidationRepository {
       name: Joi.string().trim(),
       description: Joi.string().trim(),
       estimate: Joi.date(),
-      status: Joi.string().trim(),
+      status: Joi.string().trim().valid('need to do', 'in progress', 'done', 'stoped', 'undone'),
       dueDate: Joi.date(),
       labels: Joi.array().items(Joi.string()),
     });
   }
 }
-export default new CardValidationRepository();
+export default new cardValidationSchema();

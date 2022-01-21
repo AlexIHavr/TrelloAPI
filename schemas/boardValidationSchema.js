@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-class BoardValidationRepository {
+class boardValidationSchema {
   get notRequiredIdSchema() {
     return this._getDefaultSchema().append({ id: this._getIdSchema() });
   }
@@ -18,10 +18,10 @@ class BoardValidationRepository {
   _getDefaultSchema() {
     return Joi.object({
       name: Joi.string().trim(),
-      color: Joi.string().trim(),
+      color: Joi.string().trim().valid('white', 'black', 'green', 'yelow', 'blue', 'grey', 'red'),
       description: Joi.string().trim(),
     });
   }
 }
 
-export default new BoardValidationRepository();
+export default new boardValidationSchema();
